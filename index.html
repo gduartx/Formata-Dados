@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .field {
+            margin-right: 5%;
+            margin-bottom: 15px;
+        }
+
+        .fieldcep {
+            display: inline-flex;
+            flex-direction: column;
+        }
+
+        .fieldcep label,
+        .fieldcep input {
+            margin-bottom: 10px;
+        }
+
+        .fieldcep input {
+            width: 100%;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        input {
+            padding: 10px;
+            width: 100%;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .format-button {
+            background-color: #F5871E;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 15px;
+            margin-top: 1%;
+            cursor: pointer;
+        }
+
+        .format-button:hover {
+            background-color: #ee9611;
+        }
+
+
+    </style>
+    <title>Formatador de Dados</title>
+</head>
+<body>
+    <div class="container">
+        <div class="field">
+            <label for="cnpj">CNPJ:</label>
+            <input type="text" id="cnpj" placeholder="Digite o CNPJ">
+            <button class="format-button" onclick="formatCnpj()">Formatar</button>
+        </div>
+        <div class="field">
+            <label for="idAnvisa">ID ANVISA:</label>
+            <input type="text" id="idAnvisa" placeholder="Digite o ID ANVISA">
+            <button class="format-button" onclick="formatIdAnvisa()">Formatar</button>
+        </div>
+        <div class="field">
+            <label for="telefone">TELEFONE:</label>
+            <input type="text" id="telefone" placeholder="Digite o telefone">
+            <button class="format-button" onclick="formatTelefone()">Formatar</button>
+        </div>
+        <div class="field" id="gray">
+            <label for="nome">NOME:</label>
+            <input type="text" id="nome" placeholder="Digite o nome">
+            <button class="format-button" onclick="formatNome()">Formatar</button>
+        </div>
+        <div class="field">
+            <label for="CEP">CEP:</label>
+            <input type="text" id="cep" placeholder="Digite o CEP">
+            <button class="format-button" onclick="buscarCEP()">Buscar</button>
+        </div>
+        <div class="fieldcep">
+            <label for="cepLogradouro">Logradouro</label>
+            <input type="text" id="cepLogradouro" readonly>
+            
+            <label for="cepBairro">Bairro</label>
+            <input type="text" id="cepBairro" readonly>
+
+            <label for="cepCidade">Cidade</label>
+            <input type="text" id="cepCidade" readonly>
+
+            <label for="cepUF">UF</label>
+            <input type="text" id="cepUF" readonly>
+            
+        </div>
+        <div class="field">
+            <label for="Contador">CONTADOR DE CARACTERES:</label>
+            <textarea id="caracteres" rows="4" cols="50" oninput="contarCaracteres()"></textarea>
+            <p>Caracteres: <span id="contador">0</span></p>
+    </div>
+
+    <script>
+
+function formatCnpj() {
+    const cnpjInput = document.getElementById("cnpj");
+    const cnpjValue = cnpjInput.value.replace(/\D/g, "");
+    cnpjInput.value = cnpjValue;
+
+    var copyText = cnpjInput;
+    copyText.select();
+    navigator.clipboard.writeText(copyText.value);
+}
+
+function formatIdAnvisa() {
+    const idAnvisaInput = document.getElementById("idAnvisa");
+    const idAnvisaValue = idAnvisaInput.value.replace(/\D/g, "");
+    if (idAnvisaValue.length === 7){
+        idAnvisaInput.value = "0" + idAnvisaValue
+    };
+
+    var copyText = idAnvisaInput;
+    copyText.select();
+    navigator.clipboard.writeText(copyText.value);
+}
+
+function formatTelefone() {
+    const telefoneInput = document.getElementById("telefone");
+    let telefoneValue = telefoneInput.value.replace(/\D/g, "");
+    
+    if(telefoneValue.length > 8 && telefoneValue.charAt(0) === "0"){
+        telefoneValue = telefoneValue.substring(1)
+    };
+    if(telefoneValue.length > 10 && telefoneValue.charAt(2) === "0"){
+        telefoneValue = telefoneValue.replace("0",'')
+    };
+    if(telefoneValue.length < 12){
+        telefoneValue = "55" + telefoneValue
+    }
+    telefoneInput.value = "+" + telefoneValue
+
+    var copyText = telefoneInput;
+    copyText.select();
+    navigator.clipboard.writeText(copyText.value);
+}
+
+function formatNome() {
+    const nomeInput = document.getElementById("nome");
+    let nomeValue = nomeInput.value.toLowerCase();
+    let nomeArray = nomeValue.split(' ');
+    const nomelista = ["sa", "sá"]
+    for (var i = 0; i < nomeArray.length; i++){
+        if(nomeArray[i].length > 2){
+            nomeArray[i] = nomeArray[i].charAt(0).toUpperCase() + nomeArray[i].slice(1)
+        }else if(nomeArray[i]){
+
+        };
+    };
+    nomeValue = nomeArray.join(" ");
+    nomeInput.value = nomeValue
+
+    var copyText = nomeInput;
+    copyText.select();
+    navigator.clipboard.writeText(copyText.value);
+}
+
+function limpa_formulário_cep() {
+            document.getElementById('rua').value=("");
+            document.getElementById('bairro').value=("");
+            document.getElementById('cidade').value=("");
+            document.getElementById('uf').value=("");
+            document.getElementById('ibge').value=("");
+    }
+
+function meu_callback(conteudo) {
+        if (!("erro" in conteudo)) {
+            document.getElementById('cepLogradouro').value=(conteudo.logradouro);
+            document.getElementById('cepBairro').value=(conteudo.bairro);
+            document.getElementById('cepCidade').value=(conteudo.localidade);
+            document.getElementById('cepUF').value=(conteudo.uf);
+        }
+        else {
+            limpa_formulário_cep();
+            document.getElementById('cep').value('CEP Não encontrado')
+        }
+    }
+
+function buscarCEP() {
+    const cepInput = document.getElementById("cep");
+    let cepValue = cepInput.value.replace(/\D/g, "");
+
+    if(cepValue != "") {
+        document.getElementById('cepLogradouro').value="...";
+        document.getElementById('cepBairro').value="...";
+        document.getElementById('cepCidade').value="...";
+        document.getElementById('cepUF').value="...";
+
+        var script = document.createElement('script');
+
+        script.src = 'https://viacep.com.br/ws/'+ cepValue + '/json/?callback=meu_callback';
+
+        document.body.appendChild(script);
+    }
+}
+
+function contarCaracteres() {
+    const texto = document.getElementById('caracteres').value;
+    const contador = document.getElementById('contador');
+
+    contador.textContent = texto.length;
+}
+
+
+    </script>
+</body>
+</html>
