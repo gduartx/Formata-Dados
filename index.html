@@ -1,8 +1,12 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
+    <script src="https://kit.fontawesome.com/c2aa875bd5.js" crossorigin="anonymous"></script>   
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -12,6 +16,9 @@
         }
 
         .container {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-around;
             max-width: 800px;
             margin: 50px auto;
             padding: 20px;
@@ -35,9 +42,9 @@
             margin-bottom: 10px;
         }
 
-        .fieldcep input {
+        /* .fieldcep input {
             width: 100%;
-        }
+        } */
 
         label {
             display: block;
@@ -47,9 +54,12 @@
 
         input {
             padding: 10px;
-            width: 100%;
             border: 1px solid #ccc;
             border-radius: 5px;
+        }
+
+        input#cep {
+            width: auto;
         }
 
         .format-button {
@@ -66,41 +76,116 @@
             background-color: #ee9611;
         }
 
+        .leftside {
+            display: flex;
+            flex-direction: column;
+        }
+        .leftside, .fieldcep {
+            margin: 5px;
+        }
+        .popup {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1;
+        }
+        .popup-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #fff;
+            padding: 40px;
+            width: 800px;
+            max-height: 400px;
+            border-radius: 5px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            overflow: auto;
+        }
+
+        #openPopup {
+            display: block;
+            text-align: center;
+            margin-top: 50px;
+            font-size: 18px;
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        #closePopup {
+            display: block;
+            margin-top: 20px;
+            font-size: 16px;
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        #fieldtel{
+            position: relative;
+        }
+
+        #fieldtel input {
+            padding: 10px;
+        }
+        #fieldtel #icon {
+            position: absolute;
+            left: 45%;
+            transform: translateY(80%);
+            cursor: pointer;
+            color: #F5871E;
+            text-decoration: none;
+        }
 
     </style>
     <title>Formatador de Dados</title>
 </head>
+
 <body>
     <div class="container">
-        <div class="field">
-            <label for="cnpj">CNPJ:</label>
-            <input type="text" id="cnpj" placeholder="Digite o CNPJ">
-            <button class="format-button" onclick="formatCnpj()">Formatar</button>
+        <div class="leftside"> 
+            <div class="field">
+                <label for="cnpj">CNPJ:</label>
+                <input type="text" id="cnpj" placeholder="Digite o CNPJ">
+                <button class="format-button" id="formatCnpj">Formatar</button>
+            </div>
+            <div class="field">
+                <label for="idAnvisa">ID ANVISA:</label>
+                <input type="text" id="idAnvisa" placeholder="Digite o ID ANVISA">
+                <button class="format-button" id="formatIdAnvisa">Formatar</button>
+            </div>
+            <div class="field">
+                <label for="nome">NOME:</label>
+                <input type="text" id="nome" placeholder="Digite o nome">
+                <button class="format-button" id="formatNome">Formatar</button>
+            </div>
+            <div class="field"  id="fieldtel">
+                <label for="telefone">TELEFONE:</label>
+                <input type="text" id="telefone" placeholder="Digite o telefone">
+                <a class="fa-brands fa-whatsapp" id="icon"></a>
+                <button class="format-button" id="formatTelefone">Formatar</button>
+            </div>
+            <div class="field">
+                <label for="Contador">CONTADOR DE CARACTERES:</label>
+                <textarea id="caracteres" rows="4" cols="50" oninput="contarCaracteres()"></textarea>
+                <p>Caracteres: <span id="contador">0</span></p>
+            </div>
+            
         </div>
-        <div class="field">
-            <label for="idAnvisa">ID ANVISA:</label>
-            <input type="text" id="idAnvisa" placeholder="Digite o ID ANVISA">
-            <button class="format-button" onclick="formatIdAnvisa()">Formatar</button>
-        </div>
-        <div class="field">
-            <label for="telefone">TELEFONE:</label>
-            <input type="text" id="telefone" placeholder="Digite o telefone">
-            <button class="format-button" onclick="formatTelefone()">Formatar</button>
-        </div>
-        <div class="field" id="gray">
-            <label for="nome">NOME:</label>
-            <input type="text" id="nome" placeholder="Digite o nome">
-            <button class="format-button" onclick="formatNome()">Formatar</button>
-        </div>
-        <div class="field">
-            <label for="CEP">CEP:</label>
-            <input type="text" id="cep" placeholder="Digite o CEP">
-            <button class="format-button" onclick="buscarCEP()">Buscar</button>
-        </div>
+
         <div class="fieldcep">
+            <div class="field">
+                <label for="CEP">CEP:</label>
+                <input type="text" id="cep" placeholder="Digite o CEP" size="7" maxlength="9">
+                <button class="format-button" id="buscarCEP">Buscar</button>
+            </div>
             <label for="cepLogradouro">Logradouro</label>
             <input type="text" id="cepLogradouro" readonly>
-            
+
             <label for="cepBairro">Bairro</label>
             <input type="text" id="cepBairro" readonly>
 
@@ -108,126 +193,161 @@
             <input type="text" id="cepCidade" readonly>
 
             <label for="cepUF">UF</label>
-            <input type="text" id="cepUF" readonly>
-            
+            <input type="text" id="cepUF" readonly size="5">
+
+            <a href="#" id="openPopup">Mais Resultados</a>
         </div>
-        <div class="field">
-            <label for="Contador">CONTADOR DE CARACTERES:</label>
-            <textarea id="caracteres" rows="4" cols="50" oninput="contarCaracteres()"></textarea>
-            <p>Caracteres: <span id="contador">0</span></p>
-    </div>
 
-    <script>
+        <div class="popup" id="popup">
+            <div class="popup-content">
+                <label for="cepLogradouro">Logradouro</label>
+                <input type="text" id="cepLogradouro" readonly>
 
-function formatCnpj() {
-    const cnpjInput = document.getElementById("cnpj");
-    const cnpjValue = cnpjInput.value.replace(/\D/g, "");
-    cnpjInput.value = cnpjValue;
+                <label for="cepBairro">Bairro</label>
+                <input type="text" id="cepBairro" readonly>
 
-    var copyText = cnpjInput;
-    copyText.select();
-    navigator.clipboard.writeText(copyText.value);
-}
+                <label for="cepCidade">Cidade</label>
+                <input type="text" id="cepCidade" readonly>
 
-function formatIdAnvisa() {
-    const idAnvisaInput = document.getElementById("idAnvisa");
-    const idAnvisaValue = idAnvisaInput.value.replace(/\D/g, "");
-    if (idAnvisaValue.length === 7){
-        idAnvisaInput.value = "0" + idAnvisaValue
-    };
+                <label for="cepUF">UF</label>
+                <input type="text" id="cepUF" readonly size="5">
+            </div>
+        </div>
+    </div> 
 
-    var copyText = idAnvisaInput;
-    copyText.select();
-    navigator.clipboard.writeText(copyText.value);
-}
+        <script>
+            $(document).ready(function () {
+                //Função para formatar um CNPJ. Remove os caracteres que não numéricos, seleciona o texto e copia para a área de transferência.
+                $("#formatCnpj").click(function () {
+                    var cnpjInput = $("#cnpj");
+                    var cnpjValue = cnpjInput.val().replace(/\D/g, "");
+                    cnpjInput.val(cnpjValue);
+                    cnpjInput.select();
+                    // navigator.clipboard.writeText(cnpjValue);
+                    document.execCommand("copy");
+                });
+                //Função para formatar um ID Anvisa. Remove os caracteres que não numéricos, se o tamanho for igual a 7, adiciona um 0 a frente, seleciona e copia o texto.
+                $("#formatIdAnvisa").click(function () {
+                    var idAnvisaInput = $("#idAnvisa");
+                    var idAnvisaValue = idAnvisaInput.val().replace(/\D/g, "");
+                    if (idAnvisaValue.length === 7) {
+                        idAnvisaValue = "0" + idAnvisaValue;
+                    }
+                    idAnvisaInput.val(idAnvisaValue);
+                    idAnvisaInput.select();
+                    navigator.clipboard.writeText(idAnvisaValue);
+                });
+                //Função para formatar telefone. Remove os caracteres não numéricos, e formata para o padrão +55########## ou +55##9########, seleciona e copia o texto.
+                $("#formatTelefone").click(function () {
+                    var telefoneInput = $("#telefone");
+                    var telefoneValue = telefoneInput.val().replace(/\D/g, "");
+                    if (telefoneValue.length > 8 && telefoneValue.charAt(0) === "0") {
+                        telefoneValue = telefoneValue.substring(1);
+                    }
+                    if (telefoneValue.length > 10 && telefoneValue.charAt(2) === "0") {
+                        telefoneValue = telefoneValue.replace("0", "");
+                    }
+                    if (telefoneValue.length < 12) {
+                        telefoneValue = "55" + telefoneValue;
+                    }
+                    telefoneInput.val("+" + telefoneValue);
+                    telefoneInput.select();
+                    navigator.clipboard.writeText("+" + telefoneValue);
+                });
+                //Função para formatar nome. Capitaliza os nomes com exceção das palavras com 2 caracteres. seleciona e copia o texto.
+                $("#formatNome").click(function () {
+                    var nomeInput = $("#nome"),
+                        nomeValue = nomeInput.val().toLowerCase();
+                    var nomeArray = nomeValue.split(' ');
+                    for (var i = 0; i < nomeArray.length; i++) {
+                        if (nomeArray[i].length > 2) {
+                            nomeArray[i] = nomeArray[i].charAt(0).toUpperCase() + nomeArray[i].slice(1);
+                        } else if (nomeArray[i]) {
 
-function formatTelefone() {
-    const telefoneInput = document.getElementById("telefone");
-    let telefoneValue = telefoneInput.value.replace(/\D/g, "");
+                        }
+                    }
+                    nomeValue = nomeArray.join(" ");
+                    nomeInput.val(nomeValue);
+                    nomeInput.select();
+                    navigator.clipboard.writeText(nomeValue);
+                });
+                //Função para buscar CEP atravéz da API do ViaCEP
+
+                $('#buscarCEP').click(function () {
+
+                    // if ("," in $("#cep").val()){
+                    //     let cep = $("#cep").val().split(',');
+                    //     let cepF = cep[1] + '/' + cep[0]
+                    // } else {
+                    //     let cepF = $("#cep").val().replace(/\D/g, "")
+                    // }
+
+                    $.ajax({
+
+                        /*
+                            url: "https://viacep.com.br/ws/" + jQuery("#cep").val() + "/json/"
+                        */
+                        url: "https://viacep.com.br/ws/" + $("#cep").val() + "/json/"
+                    }).done(function (json) {
+                        let resultado = 
+                            '<div class="field">' + 
+                            '<label for="CEP">CEP:</label>' +
+                            '<input type="text" id="cep" placeholder="Digite o CEP" size="7" maxlength="9">' +
+                            '<button class="format-button" id="buscarCEP">Buscar</button>' +
+                            '<label for="cepLogradouro">Logradouro</label>' +
+                            '<input type="text" id="cepLogradouro" value="' + json.logradouro + '" readonly style="width:100%">' +
+                            '<label for="cepBairro">Bairro</label>' +
+                            '<input type="text" id="cepBairro" value="' + json.bairro + '" readonly>' +
+                            '<label for="cepCidade">Cidade</label>' +
+                            '<input type="text" id="cepCidade" value="' + json.localidade + '" readonly>' +
+                            '<label for="cepUF">UF</label>' +
+                            '<input type="text" id="cepUF" value="' + json.uf + '" readonly>' +
+                            '<a href="#" id="openPopup"> Mais Resultados </a>'
+                        jQuery(".fieldcep").html(resultado)
+                    });
+                })
+                //Função de redirecionamento do Whatsapp
+                $("#icon").click(function() {
+                    var telefoneInput = $("#telefone");
+                    var telefoneValue = telefoneInput.val().replace(/\D/g, "");
+                    if (telefoneValue.length > 8 && telefoneValue.charAt(0) === "0") {
+                        telefoneValue = telefoneValue.substring(1);
+                    }
+                    if (telefoneValue.length > 10 && telefoneValue.charAt(2) === "0") {
+                        telefoneValue = telefoneValue.replace("0", "");
+                    }
+                    if (telefoneValue.length < 12) {
+                        telefoneValue = "55" + telefoneValue;
+                    }
     
-    if(telefoneValue.length > 8 && telefoneValue.charAt(0) === "0"){
-        telefoneValue = telefoneValue.substring(1)
-    };
-    if(telefoneValue.length > 10 && telefoneValue.charAt(2) === "0"){
-        telefoneValue = telefoneValue.replace("0",'')
-    };
-    if(telefoneValue.length < 12){
-        telefoneValue = "55" + telefoneValue
-    }
-    telefoneInput.value = "+" + telefoneValue
+                    let urlWhatsApp = "https://api.whatsapp.com/send?phone=" + telefoneValue;
 
-    var copyText = telefoneInput;
-    copyText.select();
-    navigator.clipboard.writeText(copyText.value);
-}
+                    window.open(urlWhatsApp, '_blank');
+                });
+            });
+            //Função para contar a quantidade de caracteres inderidos em um input
+            function contarCaracteres() {
+                const texto = document.getElementById('caracteres').value;
+                const contador = document.getElementById('contador');
 
-function formatNome() {
-    const nomeInput = document.getElementById("nome");
-    let nomeValue = nomeInput.value.toLowerCase();
-    let nomeArray = nomeValue.split(' ');
-    const nomelista = ["sa", "sá"]
-    for (var i = 0; i < nomeArray.length; i++){
-        if(nomeArray[i].length > 2){
-            nomeArray[i] = nomeArray[i].charAt(0).toUpperCase() + nomeArray[i].slice(1)
-        }else if(nomeArray[i]){
+                contador.textContent = texto.length;
+            }
 
-        };
-    };
-    nomeValue = nomeArray.join(" ");
-    nomeInput.value = nomeValue
+            //Função para abrir popup
+            document.getElementById('openPopup').addEventListener('click', function () {
+                document.getElementById('popup').style.display = 'block';
+                });
+            document.getElementById('closePopup').addEventListener('click', function () {
+                document.getElementById('popup').style.display = 'none';
+                });
+            document.getElementById('popup').addEventListener('click', function (event) {
+                if (event.target === this) {
+                    document.getElementById('popup').style.display = 'none';
+                }
+            });
 
-    var copyText = nomeInput;
-    copyText.select();
-    navigator.clipboard.writeText(copyText.value);
-}
-
-function limpa_formulário_cep() {
-            document.getElementById('rua').value=("");
-            document.getElementById('bairro').value=("");
-            document.getElementById('cidade').value=("");
-            document.getElementById('uf').value=("");
-            document.getElementById('ibge').value=("");
-    }
-
-function meu_callback(conteudo) {
-        if (!("erro" in conteudo)) {
-            document.getElementById('cepLogradouro').value=(conteudo.logradouro);
-            document.getElementById('cepBairro').value=(conteudo.bairro);
-            document.getElementById('cepCidade').value=(conteudo.localidade);
-            document.getElementById('cepUF').value=(conteudo.uf);
-        }
-        else {
-            limpa_formulário_cep();
-            document.getElementById('cep').value('CEP Não encontrado')
-        }
-    }
-
-function buscarCEP() {
-    const cepInput = document.getElementById("cep");
-    let cepValue = cepInput.value.replace(/\D/g, "");
-
-    if(cepValue != "") {
-        document.getElementById('cepLogradouro').value="...";
-        document.getElementById('cepBairro').value="...";
-        document.getElementById('cepCidade').value="...";
-        document.getElementById('cepUF').value="...";
-
-        var script = document.createElement('script');
-
-        script.src = 'https://viacep.com.br/ws/'+ cepValue + '/json/?callback=meu_callback';
-
-        document.body.appendChild(script);
-    }
-}
-
-function contarCaracteres() {
-    const texto = document.getElementById('caracteres').value;
-    const contador = document.getElementById('contador');
-
-    contador.textContent = texto.length;
-}
-
-
-    </script>
+            
+        </script>
 </body>
+
 </html>
