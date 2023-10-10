@@ -171,7 +171,7 @@
             </div>
             <div class="field">
                 <label for="Contador">CONTADOR DE CARACTERES:</label>
-                <textarea id="caracteres" rows="4" cols="50" oninput="contarCaracteres()"></textarea>
+                <textarea id="caracteres" rows="4" style="resize: none" cols="50" oninput="contarCaracteres()"></textarea>
                 <p>Caracteres: <span id="contador">0</span></p>
             </div>
             
@@ -195,7 +195,7 @@
             <label for="cepUF">UF</label>
             <input type="text" id="cepUF" readonly size="5">
 
-            <a href="#" id="openPopup">Mais Resultados</a>
+            
         </div>
 
         <div class="popup" id="popup">
@@ -223,7 +223,6 @@
                     var cnpjValue = cnpjInput.val().replace(/\D/g, "");
                     cnpjInput.val(cnpjValue);
                     cnpjInput.select();
-                    // navigator.clipboard.writeText(cnpjValue);
                     document.execCommand("copy");
                 });
                 //Função para formatar um ID Anvisa. Remove os caracteres que não numéricos, se o tamanho for igual a 7, adiciona um 0 a frente, seleciona e copia o texto.
@@ -235,7 +234,7 @@
                     }
                     idAnvisaInput.val(idAnvisaValue);
                     idAnvisaInput.select();
-                    navigator.clipboard.writeText(idAnvisaValue);
+                    document.execCommand("copy");
                 });
                 //Função para formatar telefone. Remove os caracteres não numéricos, e formata para o padrão +55########## ou +55##9########, seleciona e copia o texto.
                 $("#formatTelefone").click(function () {
@@ -252,7 +251,7 @@
                     }
                     telefoneInput.val("+" + telefoneValue);
                     telefoneInput.select();
-                    navigator.clipboard.writeText("+" + telefoneValue);
+                    document.execCommand("copy");
                 });
                 //Função para formatar nome. Capitaliza os nomes com exceção das palavras com 2 caracteres. seleciona e copia o texto.
                 $("#formatNome").click(function () {
@@ -269,41 +268,17 @@
                     nomeValue = nomeArray.join(" ");
                     nomeInput.val(nomeValue);
                     nomeInput.select();
-                    navigator.clipboard.writeText(nomeValue);
+                    document.execCommand("copy");
                 });
                 //Função para buscar CEP atravéz da API do ViaCEP
-
                 $('#buscarCEP').click(function () {
-
-                    // if ("," in $("#cep").val()){
-                    //     let cep = $("#cep").val().split(',');
-                    //     let cepF = cep[1] + '/' + cep[0]
-                    // } else {
-                    //     let cepF = $("#cep").val().replace(/\D/g, "")
-                    // }
-
                     $.ajax({
-
-                        /*
-                            url: "https://viacep.com.br/ws/" + jQuery("#cep").val() + "/json/"
-                        */
                         url: "https://viacep.com.br/ws/" + $("#cep").val() + "/json/"
                     }).done(function (json) {
-                        let resultado = 
-                            '<div class="field">' + 
-                            '<label for="CEP">CEP:</label>' +
-                            '<input type="text" id="cep" placeholder="Digite o CEP" size="7" maxlength="9">' +
-                            '<button class="format-button" id="buscarCEP">Buscar</button>' +
-                            '<label for="cepLogradouro">Logradouro</label>' +
-                            '<input type="text" id="cepLogradouro" value="' + json.logradouro + '" readonly style="width:100%">' +
-                            '<label for="cepBairro">Bairro</label>' +
-                            '<input type="text" id="cepBairro" value="' + json.bairro + '" readonly>' +
-                            '<label for="cepCidade">Cidade</label>' +
-                            '<input type="text" id="cepCidade" value="' + json.localidade + '" readonly>' +
-                            '<label for="cepUF">UF</label>' +
-                            '<input type="text" id="cepUF" value="' + json.uf + '" readonly>' +
-                            '<a href="#" id="openPopup"> Mais Resultados </a>'
-                        jQuery(".fieldcep").html(resultado)
+                        $("#cepLogradouro").val(json.logradouro)
+                        $("#cepBairro").val(json.bairro)
+                        $("#cepCidade").val(json.localidade)
+                        $("#cepUF").val(json.uf)
                     });
                 })
                 //Função de redirecionamento do Whatsapp
@@ -344,10 +319,7 @@
                 if (event.target === this) {
                     document.getElementById('popup').style.display = 'none';
                 }
-            });
-
-            
+            });            
         </script>
 </body>
-
 </html>
