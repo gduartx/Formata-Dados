@@ -20,13 +20,12 @@
             flex-direction: row;
             justify-content: space-around;
             max-width: 800px;
-            margin: 50px auto;
-            padding: 20px;
+            margin: 0px auto;
+            padding: 65px;
             background-color: #fff;
             border-radius: 5px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
-
         .field {
             margin-right: 5%;
             margin-bottom: 15px;
@@ -98,6 +97,7 @@
             width: 100%;
             height: 100%;
             background: rgba(0, 0, 0, 0.7);
+            overflow-y: auto;
         }
         .popup-content {
             position: absolute;
@@ -151,24 +151,24 @@
         .styled-table {
             border-collapse: collapse;
             width: 100%;
-            max-width: 450px;
+            max-width: 650px;
             margin-right: 5%;
             margin-bottom: 5%;
-            margin-top: 5%;
+            margin-top: 2%;
         }
 
         
         .styled-table th {
             background-color: #f2f2f2;
             text-align: left;
-            padding: 8px;
+            padding: 5px;
             border: 1px solid #ddd;
         }
 
         .styled-table td {
             background-color: #f2f2f2;
             text-align: left;
-            padding: 8px;
+            padding: 5px;
             border: 1px solid #ddd;
         }
 
@@ -182,15 +182,12 @@
             display: block;
             border-collapse: collapse;
             max-width: 400px;
-            max-height: 400px;
-            margin-top: 17%;
-            margin-bottom: 50%;
-            overflow-y: auto;
+            margin-top: 2%;
         }
         .qS-table th {
             background-color: #f2f2f2;
             text-align: left;
-            padding: 8px;
+            padding: 5px;
             border: 1px solid #ddd;
         }
 
@@ -198,7 +195,7 @@
             background-color: #f2f2f2;
             font-size: 15px;
             text-align: left;
-            padding: 8px;
+            padding: 5px;
             border: 1px solid #ddd;
         }
 
@@ -207,9 +204,13 @@
             color: #fff;
         }
 
-        #descricaoCnpj{
-            background-color: #fff;
+        #descricaoCnpj, #descricaoSecundariaCnpj{
+            background-color: #f2f2f2;
             color: black;
+        }
+
+        .campoCEP{
+            cursor: pointer;
         }
     </style>
     <title>Formatador de Dados</title>
@@ -256,20 +257,20 @@
         <div class="fieldcep">
             <div class="field">
                 <label for="CEP">CEP:</label>
-                <input type="text" id="cep" placeholder="Digite o CEP" size="7" maxlength="9">
+                <input type="text" id="cep" placeholder="Digite o CEP" size="7">
                 <button class="format-button" id="buscarCEP">Buscar</button>
             </div>
             <label for="cepLogradouro">Logradouro</label>
-            <input type="text" id="cepLogradouro" readonly>
+            <input type="text" id="cepLogradouro" class="campoCEP" readonly>
 
             <label for="cepBairro">Bairro</label>
-            <input type="text" id="cepBairro" readonly>
+            <input type="text" id="cepBairro" class="campoCEP" readonly>
 
             <label for="cepCidade">Cidade</label>
-            <input type="text" id="cepCidade" readonly>
+            <input type="text" id="cepCidade" class="campoCEP" readonly>
 
             <label for="cepUF">UF</label>
-            <input type="text" id="cepUF" readonly size="5">
+            <input type="text" id="cepUF" class="campoCEP" readonly size="5">
 
             
         </div>
@@ -323,19 +324,21 @@
                     <th colspan="2">Descrição da Atividade Econômica Principal</th>
                 </tr>
                 <tr>
-                    <th colspan="2" id="descricaoCnpj"></th>
+                    <td colspan="2" id="descricaoCnpj" class="descricao"></td>
+                <tr>
+                    <th colspan="2">Descrição da Atividades Econômicas Secundarias</th>
+                </tr>
+                <tr>
+                    <td colspan="2" id="descricaoSecundariaCnpj" class="descricao"></td>
                 </tr>
             </table>
-            <div-table class="div-table">
-                <table class="qS-table">
-                    <tr>
-                        <th colspan="2">Quadro Societário</th>
-                    </tr>
-                    <tr id="qsa">
-
-                    </tr>
-                </table>
-            </div-table>
+            <table class="qS-table">
+                <tr>
+                    <th colspan="2">Quadro Societário</th>
+                </tr>
+                <tr id="qsa">
+                </tr>
+            </table>
         </div>
     </div> 
 
@@ -407,7 +410,11 @@
                 $("#formatHCO").click(function () {
                     let listaHCO = [
                         'ltda',
-                        's/a'
+                        's/a',
+                        's/s',
+                        'upa',
+                        'efs',
+                        'ubs'
                     ];
                     var nomeInput = $("#nome"),
                         nomeValue = nomeInput.val().toLowerCase();
@@ -426,13 +433,15 @@
                 });
                 //Função para buscar CEP atravéz da API do ViaCEP
                 $('#buscarCEP').click(function () {
+                    let cep = $("#cep").val().replace(/\D/g, "");
                     $.ajax({
-                        url: "https://viacep.com.br/ws/" + $("#cep").val() + "/json/"
+                        url: "https://viacep.com.br/ws/" + cep + "/json/"
                     }).done(function (json) {
                         $("#cepLogradouro").val(json.logradouro)
                         $("#cepBairro").val(json.bairro)
                         $("#cepCidade").val(json.localidade)
                         $("#cepUF").val(json.uf)
+                        $("#cep").val(cep)
                     });
                 })
                 //Função de redirecionamento do Whatsapp
@@ -459,7 +468,7 @@
                     }).done(function (json) {
                         $("#qsa").empty()
 
-                        $("#ccnpj").text(json.cnpj + '/' + json.descricao_identificador_matriz_filial);
+                        $("#ccnpj").text(json.cnpj + ' / ' + json.descricao_identificador_matriz_filial);
                         $("#nomeFantasia").text(capitalizar(json.nome_fantasia));
                         $("#nomeEmp").text(capitalizar(json.razao_social));
                         $("#situacao").text(json.descricao_situacao_cadastral);
@@ -470,6 +479,12 @@
                         $("#municipioCNPJ").text(capitalizar(json.municipio));
                         $("#ufCNPJ").text(json.uf);
                         $("#descricaoCnpj").text(json.cnae_fiscal_descricao)
+                        let descSecundaria = json.cnaes_secundarios
+                        for (i in descSecundaria){
+                            var j = json.cnaes_secundarios[i].descricao
+                            $("#descricaoSecundariaCnpj").append('<li>' + json.cnaes_secundarios[i].descricao+ '</li>')
+                            console.log(json.cnaes_secundarios[i].descricao)
+                        }
                         let qsa = json.qsa
                         for(i in qsa){
                             $("#qsa").append(
@@ -480,13 +495,17 @@
                                     '<tr>'+
                                         '<th>Qualificação</th>'+
                                         '<td id="qualificaCNPJ">' + json.qsa[0].qualificacao_socio + '</td>'+
-                                    '</tr>')
-                            console.log('a')
-                            
+                                    '</tr>')                            
                             }
                     });
                     $("#popupCnpj").css("display", "flex");
                 });
+                //Função para copiar os campos do CEP
+                $(".campoCEP").click(function () {
+                    let campoCep = $(this);
+                    campoCep.select();
+                    document.execCommand("copy");
+                })
 
             });
             //Função para contar a quantidade de caracteres inderidos em um input
@@ -499,16 +518,29 @@
 
             //Função para capitalizar o texto
             function capitalizar(texto) {
-                var textoArray = texto.toLowerCase().split(' ');
-                for (var i = 0; i < textoArray.length; i++) {
-                    if (textoArray[i].length > 2) {
-                        textoArray[i] = textoArray[i].charAt(0).toUpperCase() + textoArray[i].slice(1);
-                    }
-                }
-                return textoArray.join(" ");
+                texto = texto.toLowerCase();
+                let listaHCO = [
+                        'ltda',
+                        's/a',
+                        's/s',
+                        'upa',
+                        'efs',
+                        'ubs'
+                ];
+                var nomeArray = texto.split(' ');
+                for (var i = 0; i < nomeArray.length; i++) {
+                    if(listaHCO.includes(nomeArray[i])){
+                        nomeArray[i] = nomeArray[i].toUpperCase()
+                    }else if (nomeArray[i].length > 2) {
+                        
+                        nomeArray[i] = nomeArray[i].charAt(0).toUpperCase() + nomeArray[i].slice(1);
+                        
+                    };
+                };
+                return nomeArray.join(" ");
             };
+
             //Função para fechar popup
-            
             document.getElementById('popupCnpj').addEventListener('click', function (event) {
                 if (event.target === this) {
                     document.getElementById('popupCnpj').style.display = 'none';
