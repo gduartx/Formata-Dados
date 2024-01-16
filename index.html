@@ -579,44 +579,6 @@
                         notyf.error('Não encontrado ou inválido')
                     });
 
-
-                            /*
-                            $.ajax({
-                                url: `https://consultas.anvisa.gov.br/#/empresas/empresas/q/?cnpj=${$("#cnpj").val()}`,
-                                method: 'GET',
-                                headers: {
-                                    'Origin': 'http://127.0.0.1:5500'
-                                }
-                            })
-                            .done(function (data) {
-                                
-                                const parser = new DOMParser();
-                                const doc = parser.parseFromString(data, 'text/html');
-
-                                const segundaOcorrencia = doc.querySelectorAll('.text-center.col-xs-2.ng-binding')[1];
-                                 Adicione a tabela ao lado esquerdo da '#styled-table'
-                                if (segundaOcorrencia) {
-                                    const tabela = document.createElement('table');
-                                    tabela.className = 'styled-table';
-                                    const corpoTabela = tabela.createTBody();
-                                    const linha = corpoTabela.insertRow();
-                                    const celulaIdAnvisa = linha.insertCell(0);
-                                    celulaIdAnvisa.textContent = segundaOcorrencia.textContent;
-
-                                    // Adicione a tabela ao lado esquerdo da '#styled-table'
-                                    $(".leftside").append(tabela);
-                                } else {
-                                    console.error('Segunda ocorrência não encontrada.');
-                                }
-                            })
-                            .fail(function (error) {
-                                console.error('Erro na solicitação AJAX:', error);
-                            });
-                        */
-
-                }); 
-                //Copiar campo de padrao de farmacia
-        
                 //Função para copiar os campos do CEP
                 $(".campoCEP").click(function () {
                     let campoCep = $(this);
